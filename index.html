@@ -1,0 +1,182 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Leonardo — адаптивное обучение</title>
+<style>
+:root{--bg:#0B1020;--c:#ffffff0d;--b:#ffffff1f;--t:#E2E8F0;--m:#94A3B8;--p:#6366F1;--a:#22D3EE;--ok:#34d399;--bad:#f87171;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f4f6fb;--c:#ffffff;--b:#d5dcea;--t:#0f172a;--m:#52607a}}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;min-height:100%;background:var(--bg);color:var(--t);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:13px;color:var(--m);font-weight:600;margin:0 0 8px}h3{margin:0 0 6px}
+.wrap{display:flex;min-height:100vh}
+nav{width:210px;padding:18px 12px;border-right:1px solid var(--b);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:2px}
+nav b{font-size:18px;padding:4px 10px 16px;letter-spacing:.04em}
+nav button{all:unset;cursor:pointer;padding:9px 12px;border-radius:10px;color:var(--m)}
+nav button.on,nav button:hover{background:#6366f133;color:var(--t)}
+main{flex:1;padding:28px;max-width:980px;min-width:0}
+.card{background:var(--c);border:1px solid var(--b);border-radius:16px;padding:18px}
+.g{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}.s2{grid-column:1/-1}
+.btn{background:var(--p);color:#fff;border:0;border-radius:10px;padding:9px 16px;font:inherit;cursor:pointer}.btn.a{background:var(--a);color:#06202a}.btn.o{background:none;border:1px solid var(--b);color:var(--t)}
+input,select{background:var(--c);color:var(--t);border:1px solid var(--b);border-radius:10px;padding:9px 12px;font:inherit;width:100%}
+input[type=range]{padding:0;accent-color:var(--p)}input[type=checkbox],input[type=radio]{width:auto}
+.bar{height:7px;background:var(--b);border-radius:9px;overflow:hidden;margin:4px 0 10px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--p),var(--a));transition:width .6s}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>.grow{flex:1}
+.chip{border:1px solid var(--b);border-radius:99px;padding:5px 13px;cursor:pointer;background:none;color:var(--m);font:inherit}.chip.on{background:#22d3ee22;border-color:var(--a);color:var(--t)}
+.big{font-size:42px;font-weight:700;line-height:1.1}.mut{color:var(--m)}.ok{color:var(--ok)}.bad{color:var(--bad)}
+.msg{padding:12px 15px;border-radius:14px;margin:8px 0;white-space:pre-wrap;max-width:88%}.me{background:#6366f144;margin-left:auto}.ai{background:var(--c);border:1px solid var(--b)}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:11px 14px;border:1px solid var(--b);border-radius:12px;background:none;color:var(--t);font:inherit;cursor:pointer}.opt:hover:not(:disabled){border-color:var(--a)}
+.opt.r{border-color:var(--ok);background:#34d39922}.opt.w{border-color:var(--bad);background:#f8717122}
+canvas{width:100%;height:auto;background:#00000033;border-radius:12px;border:1px solid var(--b)}
+#toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translate(-50%,-90px);background:var(--p);color:#fff;padding:11px 20px;border-radius:12px;transition:.4s;z-index:9}#toast.show{transform:translate(-50%,0)}
+.lab{display:flex;justify-content:space-between}
+@media(max-width:760px){.wrap{display:block}nav{position:fixed;bottom:0;left:0;right:0;top:auto;width:100%;height:auto;flex-direction:row;overflow-x:auto;border-right:0;border-top:1px solid var(--b);background:var(--bg);z-index:5;padding:6px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))}nav b{display:none}nav button{white-space:nowrap;padding:8px 11px;font-size:13px}main{padding:18px 14px 90px}.big{font-size:34px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+body{background:radial-gradient(900px 500px at 15% -10%,#6366f133,transparent),radial-gradient(700px 400px at 100% 10%,#22d3ee1f,transparent),var(--bg);background-attachment:fixed}
+.card{backdrop-filter:blur(10px);transition:transform .25s,border-color .25s}.g>.card:hover{transform:translateY(-2px);border-color:#6366f188}
+a.btn{text-decoration:none;display:inline-block}.btn{box-shadow:0 6px 24px #6366f144}
+.hero{text-align:center;padding:84px 20px 56px;position:relative;overflow:hidden}.glow{position:absolute;inset:-30% 15% auto;height:380px;background:radial-gradient(closest-side,#6366f166,transparent);filter:blur(24px);z-index:-1;animation:pl 7s ease-in-out infinite alternate}@keyframes pl{to{transform:scale(1.2);opacity:.6}}
+.pill{border:1px solid var(--b);border-radius:99px;padding:5px 14px;color:var(--a);font-size:13px}
+.hl{font-size:clamp(46px,11vw,104px);letter-spacing:.07em;line-height:1;background:linear-gradient(90deg,#818cf8,#22D3EE);-webkit-background-clip:text;background-clip:text;color:transparent;margin:22px 0 14px}
+.sub{font-size:clamp(18px,3vw,26px);max-width:720px;margin:0 auto 6px}
+.sec{max-width:1000px;margin:0 auto;padding:36px 20px}.sec h2.t{font-size:clamp(24px,4vw,34px);color:var(--t);margin-bottom:18px}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.flow span{border:1px solid var(--b);border-radius:12px;padding:8px 14px;background:var(--c)}.flow i{color:var(--a);font-style:normal}
+.ic{font-size:26px}
+</style></head><body>
+<div id="toast" role="status"></div><div id="root"></div>
+<script>
+const SUB={m:'Математика',p:'Физика',c:'Химия'};
+const T={alg:['Алгебра','m'],trig:['Тригонометрия','m'],ster:['Стереометрия','m'],kin:['Кинематика','p'],vec:['Векторы','p'],bal:['Баллистика','p'],atom:['Строение атома','c'],bond:['Химическая связь','c']};
+const PRE={trig:['alg'],vec:['trig'],kin:['vec'],bal:['kin'],ster:['alg'],bond:['atom']};
+const INT=['Космос','Ракеты','Инженерия','Программирование','Биология','Спорт','Музыка','Игры'];
+const PF={vis:'Наглядные объяснения',step:'Пошаговость',real:'Примеры из жизни',ana:'Аналогии',inter:'Интерактивные эксперименты',txt:'Текст'};
+const Q=[
+['alg',1,'Решите уравнение: 2x + 6 = 14',['3','4','5','10'],1,'2x = 14 − 6 = 8, значит x = 4.','Ошибка при переносе слагаемых через знак «=»'],
+['alg',2,'Чему равна сумма корней уравнения x² − 5x + 6 = 0?',['−5','6','5','1'],2,'По теореме Виета сумма корней = −b/a = 5.','Путает знак суммы корней в теореме Виета'],
+['trig',1,'Чему равен sin 30°?',['1/2','√3/2','1','0'],0,'sin 30° = 1/2, а √3/2 — это sin 60°.','Путает значения sin и cos для 30° и 60°'],
+['trig',2,'Скорость 10 м/с направлена под углом 60° к горизонту. Горизонтальная составляющая?',['8,66','5','10','0'],1,'vx = v·cos 60° = 10 · 0,5 = 5 м/с.','Использует sin вместо cos для горизонтальной составляющей'],
+['ster',1,'Объём куба со стороной 3?',['9','18','27','81'],2,'V = a³ = 27.','Путает площадь и объём'],
+['ster',2,'Основание пирамиды — квадрат со стороной 6, высота пирамиды 4. Чему равна апофема (высота боковой грани)?',['4','5','√52','6'],1,'Апофема = √(4² + 3²) = 5. Высота падает в центр основания, а апофема лежит на грани.','Путает высоту пирамиды с апофемой'],
+['kin',1,'Автомобиль едет 20 м/с в течение 5 с. Какой путь?',['4 м','25 м','100 м','15 м'],2,'s = v·t = 20 · 5 = 100 м.','Делит вместо умножения в формуле пути'],
+['kin',2,'Тело стартует из покоя с ускорением 2 м/с². Путь за 3 с?',['6 м','9 м','18 м','12 м'],1,'s = at²/2 = 2·9/2 = 9 м.','Забывает делить на 2 в формуле s = at²/2'],
+['vec',1,'Два перпендикулярных вектора скорости: 3 и 4 м/с. Чему равна их сумма по модулю?',['7','5','1','12'],1,'√(3² + 4²) = 5 м/с.','Складывает модули векторов вместо векторной суммы'],
+['vec',2,'Катер плывёт 4 м/с поперёк реки, течение 3 м/с. Скорость относительно берега?',['7','1','5','3,5'],2,'Скорости перпендикулярны: √(4² + 3²) = 5 м/с.','Складывает модули векторов вместо векторной суммы'],
+['bal',1,'При каком угле дальность броска максимальна (без сопротивления воздуха)?',['30°','45°','60°','90°'],1,'Дальность ∝ sin 2θ, максимум при θ = 45°.','Думает, что чем больше угол, тем дальше полёт'],
+['bal',2,'При каком угле дальность такая же, как при 30°?',['45°','50°','60°','75°'],2,'sin 2θ симметричен: углы θ и 90° − θ дают одинаковую дальность.','Не знает симметрии дополнительных углов'],
+['atom',1,'Какой заряд у электрона?',['положительный','отрицательный','нулевой','переменный'],1,'Электрон имеет отрицательный заряд.','Путает заряды частиц атома'],
+['atom',2,'Сколько электронов в нейтральном атоме кислорода (Z = 8)?',['6','8','16','10'],1,'В нейтральном атоме электронов столько же, сколько протонов: 8.','Путает число электронов и нейтронов'],
+['bond',1,'Какая связь в NaCl?',['ковалентная неполярная','ионная','металлическая','водородная'],1,'Между металлом и неметаллом возникает ионная связь.','Путает ионную и ковалентную связь'],
+['bond',2,'Какая связь в молекуле O₂?',['ионная','ковалентная полярная','ковалентная неполярная','металлическая'],2,'Атомы одинаковые, электронная пара не смещается: связь неполярная.','Путает полярную и неполярную связи']];
+const L={alg:['Алгебра — язык, на котором записывают зависимости. Уравнение решают равносильными преобразованиями: что делаем с левой частью, то и с правой.','Квадратное уравнение ax² + bx + c = 0: корни связаны теоремой Виета, x₁ + x₂ = −b/a и x₁·x₂ = c/a.'],
+trig:['sin и cos — отношения сторон прямоугольного треугольника: sin = противолежащий катет / гипотенуза, cos = прилежащий катет / гипотенуза.','Скорость v под углом θ раскладывается на части: vx = v·cos θ, vy = v·sin θ. Так тригонометрия «разбирает» движение на две оси.'],
+ster:['Стереометрия изучает тела в пространстве. Каждую вершину можно записать вектором координат, например A(0,0,0), B(6,0,0), C(6,6,0), D(0,6,0).','У пирамиды высота идёт перпендикулярно основанию, а апофема — по боковой грани. Это разные отрезки, связанные теоремой Пифагора.'],
+kin:['Кинематика описывает движение без причин: путь, скорость, ускорение. Равномерно: s = v·t.','При постоянном ускорении: v = v₀ + at и s = v₀t + at²/2.'],
+vec:['Вектор имеет величину и направление. Сумму находят по правилу треугольника или параллелограмма, а не сложением модулей.','Перпендикулярные векторы складываются по Пифагору: |v| = √(v₁² + v₂²). Это основа относительного движения.'],
+bal:['Баллистика — движение тела, брошенного под углом. По горизонтали скорость постоянна, по вертикали действует ускорение g.','Дальность L = v²·sin 2θ / g, максимальная высота H = (v·sin θ)² / 2g. Максимум дальности при 45°.'],
+atom:['Атом состоит из ядра (протоны и нейтроны) и электронов. Число протонов определяет элемент.','В нейтральном атоме число электронов равно числу протонов. Электроны занимают энергетические уровни.'],
+bond:['Химическая связь возникает из-за взаимодействия электронов атомов. Основные типы: ионная, ковалентная, металлическая.','Если атомы одинаковые (O₂), связь ковалентная неполярная. Если разные (H₂O), электроны смещены, связь полярная.']};
+const $=s=>document.querySelector(s);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pc=x=>Math.round(x*100)+'%';const bar=x=>`<div class="bar"><i style="width:${x*100}%"></i></div>`;
+let S=null;try{S=JSON.parse(localStorage.getItem('leo2'))}catch(e){}
+const save=()=>{try{localStorage.setItem('leo2',JSON.stringify(S))}catch(e){}};
+const log=t=>{S.hist.unshift({ts:Date.now(),t});S.hist=S.hist.slice(0,30);};
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2800)}
+let cur='home',P={t:'trig'},LS={t:'trig',i:0},TS=null,CH=[],ob={ints:[],self:{m:60,p:60,c:60},pref:{vis:70,step:70,real:70,ana:70,inter:70,txt:50},name:'',grade:'10'},raf=0;
+const mean=(o)=>{const k=Object.keys(T);return k.reduce((a,x)=>a+S.top[x].m,0)/k.length};
+const subM=s=>{const k=Object.keys(T).filter(x=>T[x][1]==s);return k.reduce((a,x)=>a+S.top[x].m,0)/k.length};
+const strong=ex=>Object.keys(T).filter(k=>k!=ex).sort((a,b)=>S.top[b].m-S.top[a].m)[0];
+function bump(k){S.pref[k]=Math.min(.99,S.pref[k]*.95+.05)}
+function apply(q,ok){const o=S.top[q[0]],w=Math.max(.1,.35/(1+o.e*.15));o.m=o.m*(1-w)+(ok?1:0)*w;o.e++;if(!ok){S.mis.unshift({t:q[0],x:q[6]});S.mis=S.mis.slice(0,10)}
+const l=S.last[q[0]]=(S.last[q[0]]||[]).concat(ok?1:0).slice(-3);if(l.length==3){const s=l[0]+l[1]+l[2];if(s==3)S.diff[q[0]]=2;else if(s<=1)S.diff[q[0]]=1}}
+function rec(){const m=k=>S.top[k].m,x=S.mis[0];
+if(x&&m(x.t)<.75)return{t:x.t,k:'r',why:`Последняя ошибка: «${x.x}». Стоит повторить тему.`};
+let best=null,bs=-9;for(const k of Object.keys(T)){if(m(k)>=.8)continue;const pre=PRE[k]||[],wp=pre.filter(p=>m(p)<.6).sort((a,b)=>m(a)-m(b))[0];
+if(wp){const sc=1-m(wp)+.2;if(sc>bs){bs=sc;best={t:wp,k:'r',why:`«${T[k][0]}» опирается на «${T[wp][0]}», а эта тема пока слабая.`}}}
+else{const sp=pre.find(p=>m(p)>=.8),sc=1-m(k)+(sp?.15:0);if(sc>bs){bs=sc;best={t:k,k:'l',why:sp?`Ты силён в теме «${T[sp][0]}», поэтому на неё можно опереться, чтобы освоить «${T[k][0]}».`:'Сейчас это твоя самая слабая тема.'}}}}
+return best||{t:'alg',k:'l',why:'Все темы освоены хорошо. Попробуй задачи посложнее.'}}
+const streak=()=>{const d=new Set(S.hist.map(h=>new Date(h.ts).toDateString()));let n=0,x=new Date();while(d.has(x.toDateString())){n++;x.setDate(x.getDate()-1)}return n};
+function draw(){if(!S)return onb();cancelAnimationFrame(raf);
+const nav=[['home','Главная'],['tutor','ИИ-тьютор'],['learn','Обучение'],['prac','Практика'],['test','Тесты'],['exp','Эксперимент'],['prof','Профиль']];
+$('#root').innerHTML=`<div class="wrap"><nav aria-label="Разделы"><b>LEONARDO</b>${nav.map(n=>`<button class="${cur==n[0]?'on':''}" ${cur==n[0]?'aria-current="page"':''} onclick="go('${n[0]}')">${n[1]}</button>`).join('')}</nav><main id="app">${V[cur]()}</main></div>`;
+if(cur=='exp')expInit();if(cur=='tutor')$('#chat')?.scrollTo(0,9e9)}
+function go(v){cur=v;draw();scrollTo(0,0)}
+const V={};
+V.home=()=>{const r=rec(),h=new Date().getHours(),g=h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер';
+const weak=Object.keys(T).filter(k=>S.top[k].m<.65).sort((a,b)=>S.top[a].m-S.top[b].m);
+return `<h1>${g}, ${esc(S.name)}.</h1><p class="mut">Чему хочешь научиться сегодня?</p>
+<form class="row" onsubmit="askT(event)"><input class="grow" id="q0" aria-label="Вопрос Leonardo" placeholder="Спроси Leonardo, например: объясни тригонометрию"><button class="btn">Спросить</button></form><br>
+<div class="g"><section class="card"><h2>Общий уровень освоения</h2><div class="big">${pc(mean())}</div>${bar(mean())}<span class="mut">Серия занятий: ${streak()} дн.</span></section>
+<section class="card"><h2>Сильные предметы</h2>${Object.keys(SUB).sort((a,b)=>subM(b)-subM(a)).map(s=>`<div class="lab"><span>${SUB[s]}</span><span>${pc(subM(s))}</span></div>${bar(subM(s))}`).join('')}</section>
+<section class="card"><h2>Требует внимания</h2>${weak.length?weak.map(k=>`<div class="lab"><span>${T[k][0]}</span><span>${pc(S.top[k].m)}</span></div>${bar(S.top[k].m)}`).join(''):'<span class="mut">Слабых тем нет.</span>'}</section>
+<section class="card s2" style="border-color:var(--a)"><h2>Твой следующий шаг</h2><h3>${r.k=='r'?'Повторить':'Изучить'}: ${T[r.t][0]}</h3><p class="mut">Почему это рекомендация? ${esc(r.why)}</p><button class="btn a" onclick="LS={t:'${r.t}',i:0};go('learn')">Начать обучение</button></section>
+<section class="card s2"><h2>Недавняя активность</h2>${S.hist.length?S.hist.slice(0,6).map(h=>`<div>${esc(h.t)} <span class="mut">· ${new Date(h.ts).toLocaleDateString('ru')}</span></div>`).join(''):'<span class="mut">Пока пусто. Начни с урока или задачи.</span>'}</section></div>`};
+function askT(e){e.preventDefault();const q=$('#q0').value.trim();if(!q)return;cur='tutor';reply(q);}
+V.tutor=()=>`<h1>ИИ-тьютор Leonardo</h1><p class="mut">Режим без внешнего ИИ: ответы строятся по твоей модели ученика. Спроси про любую тему платформы.</p>
+<div class="card"><div id="chat" style="max-height:52vh;overflow:auto">${CH.length?CH.map(m=>`<div class="msg ${m.r}">${esc(m.x)}</div>`).join(''):'<span class="mut">Попробуй: «Объясни тригонометрию» или «Что такое стереометрия?»</span>'}</div>
+<form class="row" onsubmit="ask(event)" style="margin-top:10px"><input class="grow" id="q1" aria-label="Сообщение" placeholder="Спроси Leonardo..."><button class="btn">Отправить</button></form></div>`;
+function ask(e){e.preventDefault();const q=$('#q1').value.trim();if(q)reply(q)}
+const KW={alg:['алгебр','уравнен'],trig:['тригон','синус','косинус','sin','cos'],ster:['стерео','пирамид','куб'],kin:['кинемат'],vec:['вектор'],bal:['баллист','бросок'],atom:['атом'],bond:['связь','связи']};
+function reply(q){const l=q.toLowerCase(),t=Object.keys(KW).find(k=>KW[k].some(w=>l.includes(w)));let a;
+if(t){const s=strong(t),i=S.ints[0];a=`Давай свяжем это с тем, что ты уже хорошо знаешь: «${T[s][0]}» (${pc(S.top[s].m)}).${i?` И с твоим интересом — ${i.toLowerCase()}.`:''}\n\n`+L[t].map((x,n)=>`Шаг ${n+1}. ${x}`).join('\n')+`\n\nТвоя текущая оценка по теме «${T[t][0]}»: ${pc(S.top[t].m)}. ${S.pref.inter>.6&&['trig','vec','kin','bal'].includes(t)?'Попробуй раздел «Эксперимент»: измени параметры и посмотри результат.':'Закрепи тему в разделе «Практика».'}`;S.top[t].m+=0}
+else a='Я пока знаю темы: алгебра, тригонометрия, стереометрия, кинематика, векторы, баллистика, строение атома, химическая связь. Назови одну из них, и я объясню с опорой на твою модель.';
+CH.push({r:'me',x:q},{r:'ai',x:a});log('Спросил тьютора: '+q.slice(0,40));save();cur='tutor';draw()}
+V.learn=()=>{const t=LS.t,st=L[t],i=LS.i,s=strong(t),it=S.ints[0];bump('step');
+return `<h1>Обучение</h1><div class="row">${Object.keys(T).map(k=>`<button class="chip ${k==t?'on':''}" onclick="LS={t:'${k}',i:0};draw()">${T[k][0]}</button>`).join('')}</div><br>
+<div class="card"><h2>${SUB[T[t][1]]} → ${T[t][0]} · шаг ${Math.min(i+1,st.length+1)} из ${st.length+1}</h2>
+${i==0?`<p>Давай опираться на то, что ты уже знаешь: «${T[s][0]}» у тебя на ${pc(S.top[s].m)}.${it?` Будем приводить примеры из области «${it.toLowerCase()}».`:''} ${S.pref.step>.7?'Идём маленькими шагами.':''}</p>`:''}
+${i<st.length?`<p>${st[i]}</p><button class="btn" onclick="LS.i++;draw()">Далее</button>`:`<h3>Проверь себя</h3>${qHTML(Q.find(q=>q[0]==t&&q[1]==1),'L')}<div id="fbL"></div><div class="row"><button class="btn o" onclick="P.t='${t}';go('prac')">Перейти к практике</button>${['trig','vec','kin','bal'].includes(t)?`<button class="btn a" onclick="go('exp')">Открыть эксперимент</button>`:''}</div>`}</div>`};
+let QO={};function qHTML(q,k){const o=q[3].map((x,i)=>i).sort(()=>Math.random()-.5);QO[k]={q,o};return `<p>${esc(q[2])}</p>`+o.map(i=>`<button class="opt" onclick="pick('${k}',${i},this)">${esc(q[3][i])}</button>`).join('')}
+function pick(k,i,el){const {q}=QO[k],ok=i==q[4],o0=S.top[q[0]].m;el.parentElement.querySelectorAll('.opt').forEach(b=>{b.disabled=true});el.classList.add(ok?'r':'w');
+if(!ok)[...el.parentElement.querySelectorAll('.opt')].find(b=>b.textContent==q[3][q[4]]).classList.add('r');
+apply(q,ok);log((ok?'Верно: ':'Ошибка: ')+T[q[0]][0]);save();
+$('#fb'+k).innerHTML=`<p class="${ok?'ok':'bad'}"><b>${ok?'Верно.':'Не совсем.'}</b> ${esc(q[5])}</p>${ok?'':`<p class="mut">Возможная ошибка в понимании: ${esc(q[6])}.</p>`}<p class="mut">Освоение темы «${T[q[0]][0]}»: ${pc(o0)} → ${pc(S.top[q[0]].m)}${k=='P'?` · следующий уровень сложности: ${S.diff[q[0]]||1}`:''}</p>${k=='P'?'<button class="btn" onclick="draw()">Следующее задание</button>':''}`}
+V.prac=()=>{const t=P.t,d=S.diff[t]||1,q=Q.find(x=>x[0]==t&&x[1]==d);
+return `<h1>Практика</h1><div class="row">${Object.keys(T).map(k=>`<button class="chip ${k==t?'on':''}" onclick="P.t='${k}';draw()">${T[k][0]}</button>`).join('')}</div><br>
+<div class="card"><h2>${T[t][0]} · сложность ${d} из 2 · освоено ${pc(S.top[t].m)}</h2>${qHTML(q,'P')}<div id="fbP"></div></div>
+<p class="mut">Три верных ответа подряд повышают сложность, а при ошибках сложность снижается. Оценка меняется постепенно: одна ошибка не перечёркивает прогресс.</p>`};
+V.test=()=>{if(!TS)return `<h1>Тесты</h1><p class="mut">Выбери предмет. В тест войдут все задачи по его темам.</p><div class="g">${Object.keys(SUB).map(s=>`<button class="card" style="cursor:pointer;color:inherit;font:inherit;text-align:left" onclick="startT('${s}')"><h3>${SUB[s]}</h3><span class="mut">${Q.filter(q=>T[q[0]][1]==s).length} вопросов · сейчас ${pc(subM(s))}</span></button>`).join('')}</div>`;
+if(TS.done)return resHTML();
+return `<h1>Тест: ${SUB[TS.s]}</h1>${TS.qs.map((q,n)=>`<div class="card" style="margin-bottom:12px"><h2>Вопрос ${n+1} · ${T[q[0]][0]}</h2><p>${esc(q[2])}</p>${q[3].map((x,i)=>`<label style="display:block;padding:4px 0"><input type="radio" name="t${n}" value="${i}"> ${esc(x)}</label>`).join('')}</div>`).join('')}<button class="btn" onclick="finT()">Завершить тест</button>`};
+function startT(s){TS={s,qs:Q.filter(q=>T[q[0]][1]==s).sort(()=>Math.random()-.5)};draw()}
+function finT(){const ans=TS.qs.map((q,n)=>{const c=document.querySelector(`input[name=t${n}]:checked`);return c?+c.value:-1});if(ans.includes(-1)){toast('Ответь на все вопросы');return}
+TS.ans=ans;TS.done=1;TS.applied=0;TS.before={};Object.keys(T).forEach(k=>TS.before[k]=S.top[k].m);S.tests.unshift({s:TS.s,sc:TS.qs.filter((q,n)=>ans[n]==q[4]).length,n:TS.qs.length,ts:Date.now()});S.tests=S.tests.slice(0,10);log(`Прошёл тест: ${SUB[TS.s]}`);save();draw()}
+function resHTML(){const ok=TS.qs.map((q,n)=>TS.ans[n]==q[4]),sc=ok.filter(x=>x).length,by={};TS.qs.forEach((q,n)=>{(by[q[0]]=by[q[0]]||[]).push(ok[n])});
+return `<h1>Результат</h1><div class="g"><div class="card"><h2>Счёт</h2><div class="big">${sc}/${TS.qs.length}</div></div>
+<div class="card"><h2>По темам</h2>${Object.keys(by).map(k=>{const v=by[k].filter(x=>x).length/by[k].length;return `<div class="lab"><span>${T[k][0]}</span><span>${pc(v)}</span></div>${bar(v)}`}).join('')}</div>
+<div class="card s2"><h2>Обнаруженные заблуждения</h2>${TS.qs.filter((q,n)=>!ok[n]).map(q=>`<p>• ${esc(q[6])}<br><span class="mut">${esc(q[5])}</span></p>`).join('')||'<span class="ok">Заблуждений не найдено.</span>'}</div></div><br>
+${TS.applied?`<div class="card"><h2>Leonardo обновил твою модель</h2>${Object.keys(by).map(k=>`<div>${T[k][0]}: ${pc(TS.before[k])} → <b>${pc(S.top[k].m)}</b></div>`).join('')}<p class="mut">Следующий шаг: ${T[rec().t][0]}</p><button class="btn" onclick="TS=null;go('home')">На главную</button></div>`:`<button class="btn a" onclick="updT()">Обновить мою модель</button> <button class="btn o" onclick="TS=null;draw()">Другой тест</button>`}`}
+function updT(){TS.qs.forEach((q,n)=>apply(q,TS.ans[n]==q[4]));TS.applied=1;save();toast('Leonardo обновил твою модель обучения');draw()}
+V.exp=()=>{bump('inter');return `<h1>Интерактивный эксперимент: бросок под углом</h1><p class="mut">Попробуй менять параметры. Все расчёты выполняются по формулам, ИИ в них не участвует.</p>
+<div class="g" style="grid-template-columns:2fr 1fr"><div class="card"><canvas id="cv" width="720" height="360" aria-label="Траектория броска"></canvas><div class="row" style="margin-top:8px"><button class="btn" id="pl" onclick="expPlay()">Пауза</button><button class="btn o" onclick="E.t=0">Заново</button></div></div>
+<div class="card"><label>Скорость: <b id="ov">20</b> м/с<input type="range" id="v" min="5" max="40" value="20" oninput="expUp()"></label><br><label>Угол: <b id="oa">45</b>°<input type="range" id="a" min="5" max="85" value="45" oninput="expUp()"></label><br><label>Ускорение g: <b id="og">9.8</b> м/с²<input type="range" id="g" min="1.6" max="25" step=".1" value="9.8" oninput="expUp()"></label><hr style="border-color:var(--b)"><div id="st"></div></div></div>`};
+const E={t:0,run:1};
+function expInit(){E.t=0;E.run=1;expUp();let last=0;const loop=ts=>{if(cur!='exp')return;if(E.run){E.t+=(ts-last)/1000;}last=ts;expDraw();raf=requestAnimationFrame(loop)};raf=requestAnimationFrame(loop)}
+function expPlay(){E.run=!E.run;$('#pl').textContent=E.run?'Пауза':'Пуск'}
+function expP(){const v=+$('#v').value,a=+$('#a').value*Math.PI/180,g=+$('#g').value;return{v,a,g,vx:v*Math.cos(a),vy:v*Math.sin(a)}}
+function expUp(){const p=expP();p.T=2*p.vy/p.g;$('#ov').textContent=p.v;$('#oa').textContent=Math.round(p.a*180/Math.PI);$('#og').textContent=p.g;E.t=0;
+$('#st').innerHTML=`vx = v·cos θ = <b>${p.vx.toFixed(1)}</b> м/с<br>vy = v·sin θ = <b>${p.vy.toFixed(1)}</b> м/с<br>Время полёта: <b>${p.T.toFixed(2)}</b> с<br>Дальность: <b>${(p.vx*p.T).toFixed(1)}</b> м<br>Макс. высота: <b>${(p.vy*p.vy/2/p.g).toFixed(1)}</b> м`}
+function expDraw(){const c=$('#cv');if(!c)return;const x=c.getContext('2d'),p=expP(),T=2*p.vy/p.g,R=p.vx*T,H=p.vy*p.vy/2/p.g,W=c.width,Hh=c.height,sc=Math.min((W-80)/Math.max(R,1),(Hh-70)/Math.max(H,1)),ox=40,oy=Hh-30;
+const col=getComputedStyle(document.documentElement).getPropertyValue('--m');x.clearRect(0,0,W,Hh);x.strokeStyle=col;x.fillStyle=col;x.beginPath();x.moveTo(ox,oy);x.lineTo(W-10,oy);x.moveTo(ox,oy);x.lineTo(ox,10);x.stroke();
+x.strokeStyle='#6366F1';x.lineWidth=2;x.beginPath();for(let i=0;i<=60;i++){const t=T*i/60,X=ox+p.vx*t*sc,Y=oy-(p.vy*t-.5*p.g*t*t)*sc;i?x.lineTo(X,Y):x.moveTo(X,Y)}x.stroke();
+const t=E.t>T?(E.t>T+1?(E.t=0):T):E.t,X=ox+p.vx*t*sc,Y=oy-(p.vy*t-.5*p.g*t*t)*sc;x.fillStyle='#22D3EE';x.beginPath();x.arc(X,Y,7,0,7);x.fill();
+const vy=p.vy-p.g*t;x.strokeStyle='#22D3EE';x.beginPath();x.moveTo(X,Y);x.lineTo(X+p.vx*4,Y-vy*4);x.stroke();x.fillStyle=col;x.font='13px system-ui';x.fillText(`Дальность ${R.toFixed(1)} м`,W-140,oy-8)}
+V.prof=()=>`<h1>Твоя модель обучения</h1><div class="g"><section class="card"><h2>Данные ученика</h2><label>Имя<input id="pn" value="${esc(S.name)}"></label><br><br><label>Класс<select id="pg">${[5,6,7,8,9,10,11].map(g=>`<option ${g==S.grade?'selected':''}>${g}</option>`).join('')}</select></label><br><h2>Интересы</h2><div class="row">${INT.map(i=>`<button class="chip ${S.ints.includes(i)?'on':''}" onclick="tg('${i}')">${i}</button>`).join('')}</div><br><button class="btn" onclick="saveP()">Сохранить</button> <button class="btn o" onclick="if(confirm('Удалить все данные ученика?')){S=null;try{localStorage.removeItem('leo2')}catch(e){}ob.ints=[];draw()}">Сбросить данные</button></section>
+<section class="card"><h2>Предпочтения в обучении</h2>${Object.keys(PF).map(k=>`<div class="lab"><span>${PF[k]}</span><span>${pc(S.pref[k])}</span></div>${bar(S.pref[k])}`).join('')}<p class="mut">Leonardo постоянно обновляет эти значения по твоему поведению: что ты открываешь и как решаешь задачи.</p></section>
+<section class="card s2"><h2>Знания по темам</h2><div class="g">${Object.keys(SUB).map(s=>`<div><h3>${SUB[s]}</h3>${Object.keys(T).filter(k=>T[k][1]==s).map(k=>`<div class="lab"><span>${T[k][0]}</span><span>${pc(S.top[k].m)}</span></div>${bar(S.top[k].m)}`).join('')}</div>`).join('')}</div></section>
+<section class="card"><h2>Недавние ошибки</h2>${S.mis.length?S.mis.slice(0,5).map(m=>`<div>• ${T[m.t][0]}: ${esc(m.x)}</div>`).join(''):'<span class="mut">Пока нет.</span>'}</section>
+<section class="card"><h2>Недавние тесты</h2>${S.tests.length?S.tests.slice(0,5).map(t=>`<div>${SUB[t.s]}: ${t.sc}/${t.n} <span class="mut">· ${new Date(t.ts).toLocaleDateString('ru')}</span></div>`).join(''):'<span class="mut">Тестов ещё не было.</span>'}</section></div>`;
+function tg(i){const a=S.ints,x=a.indexOf(i);x<0?a.push(i):a.splice(x,1);save();draw()}
+function saveP(){S.name=$('#pn').value.trim()||S.name;S.grade=+$('#pg').value;save();toast('Данные сохранены');draw()}
+function onb(){$('#root').innerHTML=`<header class="hero"><div class="glow"></div><span class="pill">Адаптивное обучение для школьников</span><h1 class="hl">LEONARDO</h1><p class="sub">Искусственный интеллект, который учится тому, как учишься ты.</p><p class="mut">Одна программа. Разные пути обучения.</p><br><div class="row" style="justify-content:center"><a class="btn a" href="#start">Попробовать Leonardo</a><button class="btn o" onclick="mk(1)">Смотреть демо</button></div></header>
+<section class="sec"><h2 class="t">Всем ученикам дают один и тот же путь</h2><div class="g"><div class="card"><h3>Обычное обучение</h3><p class="mut">Одинаковый материал.<br>Одинаковый темп.<br>Одинаковое объяснение.</p></div><div class="card" style="border-color:var(--a)"><h3>Leonardo</h3><p>Модель ученика.<br>Персональные объяснения.<br>Адаптивная сложность.<br>Интерактивные эксперименты.<br>Постоянная подстройка под тебя.</p></div></div></section>
+<section class="sec"><h2 class="t">Как это работает</h2><div class="flow"><span>Ученик</span><i>→</i><span>Модель ученика</span><i>→</i><span>Персонализация</span><i>→</i><span>Практика</span><i>→</i><span>Тест</span><i>→</i><span>Обновление модели</span></div></section>
+<section class="sec"><h2 class="t">Почему Leonardo</h2><div class="g">${[['🧠','ИИ-тьютор','Объясняет через то, что ты уже хорошо знаешь.'],['📈','Адаптивные задачи','Сложность растёт и падает вместе с твоим результатом.'],['🧬','Модель ученика','Знания, ошибки, интересы и способы объяснения в одном профиле.'],['🚀','Эксперименты','Меняй параметры и сразу видишь результат.'],['📝','Умные тесты','Разбор заблуждений, а не только счёт.'],['🕸️','Граф знаний','Платформа знает, какая тема на какой опирается.']].map(f=>`<div class="card"><div class="ic">${f[0]}</div><h3>${f[1]}</h3><p class="mut">${f[2]}</p></div>`).join('')}</div></section>
+<main id="start" style="margin:auto;max-width:640px;padding:28px"><h2 class="t" style="font-size:28px;color:var(--t)">Создай свой профиль</h2><p class="mut">Расскажи о себе, и Leonardo построит твою модель ученика. Данные хранятся только у тебя в браузере.</p>
+<div class="card"><label>Как тебя зовут?<input id="on" value="${esc(ob.name)}" placeholder="Имя"></label><br><br><label>Класс<select id="og2">${[5,6,7,8,9,10,11].map(g=>`<option ${g==ob.grade?'selected':''}>${g}</option>`).join('')}</select></label><br><h2>Интересы</h2><div class="row">${INT.map(i=>`<button class="chip ${ob.ints.includes(i)?'on':''}" onclick="oi('${i}')">${i}</button>`).join('')}</div>
+<h2 style="margin-top:16px">Как ты оцениваешь свои знания?</h2>${Object.keys(SUB).map(s=>`<label class="lab">${SUB[s]}<b>${ob.self[s]}%</b></label><input type="range" min="20" max="95" value="${ob.self[s]}" oninput="ob.self['${s}']=+this.value;this.previousElementSibling.lastChild.textContent=this.value+'%'" aria-label="${SUB[s]}">`).join('')}
+<h2 style="margin-top:16px">Что тебе помогает учиться?</h2>${Object.keys(PF).map(k=>`<label class="lab">${PF[k]}<b>${ob.pref[k]}%</b></label><input type="range" min="0" max="100" value="${ob.pref[k]}" oninput="ob.pref['${k}']=+this.value;this.previousElementSibling.lastChild.textContent=this.value+'%'" aria-label="${PF[k]}">`).join('')}
+<br><div class="row"><button class="btn" onclick="mk(0)">Начать обучение</button><button class="btn o" onclick="mk(1)">Загрузить демо-ученика</button></div></div></main>`}
+function oi(i){ob.name=$('#on').value;ob.grade=$('#og2').value;const a=ob.ints,x=a.indexOf(i);x<0?a.push(i):a.splice(x,1);onb();$('#start').scrollIntoView()}
+function mk(demo){let top={},pref,name,grade,ints;
+if(demo){const d={alg:.87,trig:.63,ster:.55,kin:.94,vec:.9,bal:.97,atom:.91,bond:.84};for(const k in d)top[k]={m:d[k],e:5};pref={vis:.91,step:.94,real:.88,ana:.9,inter:.92,txt:.55};name='Демо-ученик';grade=10;ints=['Космос','Ракеты','Инженерия']}
+else{name=$('#on').value.trim();if(!name){toast('Введи имя');return}grade=+$('#og2').value;ints=ob.ints;pref={};for(const k in ob.pref)pref[k]=ob.pref[k]/100;for(const k in T)top[k]={m:ob.self[T[k][1]]/100,e:2}}
+S={name,grade,ints,pref,top,diff:{},last:{},mis:[],hist:[],tests:[]};log('Создан профиль ученика');save();cur='home';draw()}
+draw();
+</script></body></html>
